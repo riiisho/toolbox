@@ -23,10 +23,27 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0"></script>
 <script>
   document.getElementById("confettiButton").addEventListener("click", () => {
-    confetti({
-      particleCount: 512,
-      spread: 360,
-      startVelocity: 30,
-    });
+    let maxParticles = 128;
+    let batchSize = 64;
+    let count = 0;
+
+    function launchConfetti() {
+      if (count >= maxParticles) return;
+
+      confetti({
+        particleCount: batchSize,
+        spread: 360,
+        startVelocity: 32,
+        origin: { x: Math.random(), y: Math.random() * 0.3 },
+      });
+
+      count += batchSize;
+
+      if (count < maxParticles) {
+        requestAnimationFrame(launchConfetti);
+      }
+    }
+
+    launchConfetti();
   });
 </script>
