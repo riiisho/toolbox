@@ -1,0 +1,10 @@
+--root {
+  --tb-grey: #f5f5f5;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(var(--tb-grey), 1);
+}
