@@ -4,12 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="stylesheet.css" />
-    <title>toolbox</title>
+    <title>ToolBox | Home</title>
   </head>
   <body>
     <section>
-      <h1>toolbox</h1>
-      <p>this is a toolbox</p>
+      <h1>Welcome to the ToolBox</h1>
+      <p>This is WIP but here is a button...</p>
     </section>
+    <section>
+      <button id="confettiButton">Click me!</button>
+    </section>
+    <footer>
+      <p>Made with ❤️ by @riiisho</p>
+    </footer>
   </body>
 </html>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0"></script>
+<script>
+  document.getElementById("confettiButton").addEventListener("click", () => {
+    confetti({
+      particleCount: 512,
+      spread: 360,
+      startVelocity: 30,
+    });
+  });
+</script>
