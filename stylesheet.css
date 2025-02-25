@@ -18,6 +18,7 @@ body {
   font-family: "Roboto", serif;
   box-sizing: border-box;
   user-select: none;
+  line-height: 140%;
   margin: 0;
 }
 
@@ -32,17 +33,23 @@ body {
   background-color: rgba(var(--tb-grey), 1);
 }
 
+header {
+  margin-bottom: -3.2rem;
+}
+
 section,
 footer {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.6rem;
+  padding: 0 2.4rem;
   max-width: 141.4rem;
   width: 100%;
 }
 
-section:first-child,
+section:first-of-type,
 footer {
   margin-top: auto;
 }
@@ -55,6 +62,11 @@ h1 {
   font-size: 3.2rem;
 }
 
+h2 {
+  font-size: 2.4rem;
+}
+
+h3,
 p,
 a {
   font-size: 1.6rem;
@@ -66,7 +78,17 @@ footer > a {
   color: rgba(0, 0, 0, 0.5);
 }
 
-button {
+.tb-back-button {
+  position: absolute;
+  top: 2.4rem;
+  left: 2.4rem;
+  text-decoration: none;
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+button,
+.tb-button {
   font-size: 1.6rem;
   padding: 1.2rem 2.4rem;
   border-radius: 0.8rem;
@@ -74,6 +96,8 @@ button {
   touch-action: manipulation;
   background-color: rgba(var(--tb-dim-grey), 1);
   box-shadow: 0 0.4rem 0.8rem rgba(0, 0, 0, 0.25);
+  text-decoration: none;
+  text-align: center;
   color: white;
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
@@ -81,6 +105,47 @@ button {
 
 button:hover {
   background-color: rgba(var(--tb-dim-grey), 0.8);
+}
+
+.button-container {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.notice-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  top: 19.2rem;
+  padding: 2.4rem;
+  background-color: rgba(var(--tb-dim-grey), 0.2);
+  border-radius: 1.6rem;
+  margin: 2.4rem;
+}
+
+.tb-title {
+  text-align: center;
+}
+
+.tb-score {
+  position: absolute;
+  top: 2.4rem;
+  right: 2.4rem;
+  text-decoration: none;
+  font-weight: bold;
+  color: red;
+}
+
+.tb-button-label {
+  position: absolute;
+  bottom: 4.8rem;
+  font-size: 1.2rem;
+  text-align: center;
+  width: 200%;
+  white-space: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 @media (max-width: 768px) {

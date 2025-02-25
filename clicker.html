@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="stylesheet.css" />
+    <title>ToolBox | The Clicker</title>
+  </head>
+  <body>
+    <header>
+      <a class="tb-back-button" href="/index.html">Back to Home</a>
+    </header>
+    <section class="tb-title">
+      <h1>You have entered The Clicker</h1>
+      <p>
+        Did you want a purpose to clicking that button? Well now you have one...
+      </p>
+    </section>
+    <section>
+      <div style="position: relative">
+        <button id="confettiButton">Click me!</button>
+        <p class="tb-button-label">
+          <span id="scorePerClick"></span> per/click
+        </p>
+      </div>
+      <p>
+        You currently have
+        <span id="score" style="font-weight: bold">0</span> Click Bucks
+      </p>
+      <div class="button-container">
+        <button id="upgradeButton">
+          Upgrade <br />
+          <span style="font-size: 1.2rem"
+            ><span id="upgradeCost"></span> Click Bucks</span
+          >
+        </button>
+        <button id="clearButton">Clear</button>
+      </div>
+      <div class="notice-container">
+        <h3>Notice</h3>
+        <p>Every time you click the button you will gain Click Bucks.</p>
+        <p>
+          You can upgrade to double your Click Bucks per click. <br />
+          Doing so will also increase the upgrade price.
+        </p>
+        <p>You can clear the button to reset your Click Bucks.</p>
+        <p style="font-style: italic; font-size: 1.4rem">
+          <span style="font-weight: bold">PS</span> You clicked this button
+          <span id="counter">0</span> times
+        </p>
+      </div>
+    </section>
+    <footer>
+      <a href="https://github.com/riiisho/toolbox">View on GitHub</a>
+      <p>Made with ❤️ by @riiisho</p>
+    </footer>
+  </body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0"></script>
+<script>
+  let score = parseInt(localStorage.getItem("score")) || 0;
+  let count = parseInt(localStorage.getItem("clickCount")) || 0;
+  let scorePerClick = parseInt(localStorage.getItem("scorePerClick")) || 1;
+  let upgradeCost = parseInt(localStorage.getItem("upgradeCost")) || 25;
+  document.getElementById("score").textContent = score;
+  document.getElementById("counter").textContent = count;
+  document.getElementById("scorePerClick").textContent = scorePerClick;
+  document.getElementById("upgradeCost").textContent = upgradeCost;
+
+  document.getElementById("confettiButton").addEventListener("click", () => {
+    score += scorePerClick;
+    count++;
+    document.getElementById("score").textContent = score;
+    document.getElementById("counter").textContent = count;
+    localStorage.setItem("score", score);
+    localStorage.setItem("clickCount", count);
+
+    let maxParticles = 128;
+    let batchSize = 64;
+    let confettiCount = 0;
+
+    function launchConfetti() {
+      if (confettiCount >= maxParticles) return;
+
+      confetti({
+        particleCount: batchSize,
+        spread: 360,
+        startVelocity: 32,
+        origin: { x: Math.random(), y: Math.random() * 0.3 },
+      });
+
+      confettiCount += batchSize;
+
+      if (confettiCount < maxParticles) {
+        requestAnimationFrame(launchConfetti);
+      }
+    }
+
+    launchConfetti();
+  });
+
+  document.getElementById("upgradeButton").addEventListener("click", () => {
+    if (score >= upgradeCost) {
+      score -= upgradeCost;
+      scorePerClick *= 2;
+      upgradeCost = Math.ceil(upgradeCost * Math.PI);
+      document.getElementById("score").textContent = score;
+      document.getElementById("scorePerClick").textContent = scorePerClick;
+      document.getElementById("upgradeCost").textContent = upgradeCost;
+      localStorage.setItem("score", score);
+      localStorage.setItem("scorePerClick", scorePerClick);
+      localStorage.setItem("upgradeCost", upgradeCost);
+    }
+  });
+
+  document.getElementById("clearButton").addEventListener("click", () => {
+    score = 0;
+    count = 0;
+    scorePerClick = 1;
+    upgradeCost = 25;
+    document.getElementById("score").textContent = score;
+    document.getElementById("counter").textContent = count;
+    document.getElementById("scorePerClick").textContent = scorePerClick;
+    document.getElementById("upgradeCost").textContent = upgradeCost;
+    localStorage.setItem("score", score);
+    localStorage.setItem("clickCount", count);
+    localStorage.setItem("scorePerClick", scorePerClick);
+    localStorage.setItem("upgradeCost", upgradeCost);
+  });
+</script>
