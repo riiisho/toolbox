@@ -9,6 +9,11 @@ html {
   font-size: 62.5%;
 }
 
+html,
+body {
+  min-width: 320px;
+}
+
 * {
   font-family: "Roboto", serif;
   box-sizing: border-box;
@@ -69,4 +74,14 @@ button {
 
 button:hover {
   background-color: rgba(var(--tb-dim-grey), 0.8);
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 50%;
+  }
+
+  footer {
+    padding-bottom: 6.4rem;
+  }
 }
