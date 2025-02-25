@@ -25,16 +25,11 @@ body {
 body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   gap: 3.2rem;
   height: 100dvh;
   overflow: hidden;
   background-color: rgba(var(--tb-grey), 1);
-}
-
-header {
-  margin-bottom: -3.2rem;
 }
 
 section,
@@ -49,13 +44,13 @@ footer {
   width: 100%;
 }
 
-section:first-of-type,
-footer {
-  margin-top: auto;
+section:first-of-type {
+  margin-top: 12.8rem;
 }
 
 footer {
   padding: 1.2rem 2.4rem 3.2rem;
+  margin-top: auto;
 }
 
 h1 {
@@ -153,7 +148,11 @@ button:hover {
     font-size: 50%;
   }
 
+  section:first-of-type {
+    margin-top: 6.4rem;
+  }
+
   footer {
-    padding-bottom: 6.4rem;
+    padding-bottom: 3.2rem;
   }
 }
