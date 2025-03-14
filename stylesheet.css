@@ -18,7 +18,7 @@ body {
   font-family: "Roboto", serif;
   box-sizing: border-box;
   user-select: none;
-  line-height: 140%;
+  line-height: 100%;
   margin: 0;
 }
 
@@ -141,6 +141,37 @@ button:hover {
   white-space: nowrap;
   left: 50%;
   transform: translateX(-50%);
+}
+
+input[type="file"] {
+  display: none;
+}
+
+textarea {
+  resize: none;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 64rem;
+  height: 5.6rem;
+  text-align: center;
+  padding: 1.6rem;
+  font-size: 2.4rem;
+  font-weight: bold;
+  border-radius: 0.8rem;
+  border: none;
+  outline: none;
+}
+
+label.drag-and-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 2.4rem;
+  border-radius: 1.6rem;
+  font-size: 1.6rem;
+  border: 2px dashed rgba(var(--tb-dim-grey), 0.2);
+  cursor: pointer;
 }
 
 @media (max-width: 768px) {

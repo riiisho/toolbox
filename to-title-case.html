@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="stylesheet.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <title>ToolBox | Title Case Converter</title>
+  </head>
+  <body>
+    <header>
+      <a
+        class="tb-back-button"
+        href="/toolbox"
+        onclick="if (window.location.hostname === 'localhost') this.href = 'index.html';"
+        >Back to Home</a
+      >
+    </header>
+    <section class="tb-title">
+      <h1>Title Case Converter</h1>
+      <p>A tool to convert your text to Title Case.</p>
+    </section>
+    <section>
+      <textarea id="textInput" placeholder="Type or Paste Text Here"></textarea
+      ><br />
+      <button id="convertButton">Convert</button>
+    </section>
+    <footer>
+      <a href="https://github.com/riiisho/toolbox">View on GitHub</a>
+      <p>Made with ❤️ by @riiisho</p>
+    </footer>
+  </body>
+</html>
+
+<script>
+  const lowercaseWords = new Set([
+    "a",
+    "an",
+    "the",
+    "and",
+    "but",
+    "or",
+    "nor",
+    "for",
+    "so",
+    "yet",
+    "at",
+    "by",
+    "from",
+    "in",
+    "of",
+    "on",
+    "to",
+    "with",
+  ]);
+
+  const twoPartVerbs = new Set([
+    "log in",
+    "sign up",
+    "check out",
+    "set up",
+    "go on",
+  ]);
+
+  const knownAcronyms = new Set([
+    "html",
+    "css",
+    "js",
+    "api",
+    "svg",
+    "json",
+    "xml",
+    "php",
+    "sql",
+    "cpu",
+    "gpu",
+    "ram",
+    "usb",
+    "ai",
+    "ui",
+    "nasa",
+  ]);
+
+  document
+    .getElementById("convertButton")
+    .addEventListener("click", convertText);
+
+  function convertText() {
+    const inputField = document.getElementById("textInput");
+    inputField.value = toAppleTitleCase(inputField.value);
+  }
+
+  function toAppleTitleCase(str) {
+    return str
+      .split(" ")
+      .map((word, index, words) => {
+        // Convert known acronyms to uppercase (e.g., "svg" -> "SVG")
+        if (isAcronym(word)) return word.toUpperCase();
+
+        // Handle two-part verbs (e.g., "Log In")
+        if (index < words.length - 1) {
+          let pair = `${word.toLowerCase()} ${words[index + 1].toLowerCase()}`;
+          if (twoPartVerbs.has(pair)) {
+            words[index + 1] = capitalize(words[index + 1]); // Capitalize second word
+            return capitalize(word);
+          }
+        }
+
+        // Handle hyphenated words (e.g., "State-of-the-Art")
+        if (word.includes("-")) {
+          return word
+            .split("-")
+            .map((part, i) =>
+              i === 0 || isImportantWord(part)
+                ? capitalize(part)
+                : part.toLowerCase()
+            )
+            .join("-");
+        }
+
+        // Capitalize first & last word, and important words
+        if (
+          index === 0 ||
+          index === words.length - 1 ||
+          isImportantWord(word)
+        ) {
+          return capitalize(word);
+        }
+
+        return word.toLowerCase();
+      })
+      .join(" ");
+  }
+
+  // Detects if a word is a known acronym
+  function isAcronym(word) {
+    return knownAcronyms.has(word.toLowerCase());
+  }
+
+  // Check if a word is important (not a lowercase word)
+  function isImportantWord(word) {
+    return !lowercaseWords.has(word.toLowerCase());
+  }
+
+  // Capitalize the first letter of a word
+  function capitalize(word) {
+    return word.charAt(0).toUpperCase() + word.slice(1);
+  }
+</script>

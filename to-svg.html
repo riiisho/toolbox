@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <link rel="stylesheet" href="stylesheet.css" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <title>ToolBox | To SVG</title>
+  </head>
+  <body>
+    <header>
+      <a
+        class="tb-back-button"
+        href="/toolbox"
+        onclick="if (window.location.hostname === 'localhost') this.href = 'index.html';"
+        >Back to Home</a
+      >
+    </header>
+    <section class="tb-title">
+      <h1>Media to SVG</h1>
+      <p>A tool to convert media files to SVG.</p>
+    </section>
+    <section>
+      <input type="file" id="fileInput" accept="image/*" />
+      <label for="fileInput" id="fileLabel" class="drag-and-drop">
+        <p>Drag and drop a file here</p>
+        <p>or click to select a file</p>
+      </label>
+      <button id="convertButton">Convert</button>
+      <div class="notice-container">
+        <h3>Notice</h3>
+        <p>This is WIP and does not work well.</p>
+        <p>For the funnies!</p>
+      </div>
+    </section>
+    <footer>
+      <a href="https://github.com/riiisho/toolbox">View on GitHub</a>
+      <p>Made with ❤️ by @riiisho</p>
+    </footer>
+  </body>
+</html>
+
+<script>
+  const fileInput = document.getElementById("fileInput");
+  const fileLabel = document.getElementById("fileLabel");
+
+  // Check if a file is selected on page load
+  if (fileInput.files.length > 0) {
+    const fileName = fileInput.files[0].name;
+    fileLabel.textContent = `Selected file: ${fileName}`;
+  }
+
+  // Add event listener for file input change
+  fileInput.addEventListener("change", function () {
+    if (fileInput.files.length > 0) {
+      const fileName = fileInput.files[0].name;
+      fileLabel.textContent = `Selected file: ${fileName}`;
+    }
+  });
+
+  // Load Web Worker from external file
+  const worker = new Worker("contourWorker.js");
+
+  document
+    .getElementById("convertButton")
+    .addEventListener("click", async () => {
+      console.log("Conversion started...");
+      const file = document.getElementById("fileInput").files[0];
+      if (!file) return;
+
+      const img = await loadImage(file);
+      const { width, height } = img;
+      console.log(`Image loaded: ${width}x${height}`);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, width, height);
+      console.log("Image data extracted, sending to worker...");
+
+      worker.postMessage({ imageData, width, height });
+    });
+
+  worker.onmessage = (e) => {
+    console.log("Contours detected: ", e.data.contours.length);
+    const svgData = rasterToSVG(e.data.contours, e.data.width, e.data.height);
+    console.log("SVG conversion completed");
+    downloadSVG(svgData, "output.svg");
+  };
+
+  worker.onerror = (e) => {
+    console.error("Worker Error:", e);
+  };
+
+  function loadImage(file) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  function rasterToSVG(contours, width, height) {
+    let svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}'>`;
+    for (const contour of contours) {
+      svg += `<path d='${contour.path}' fill='${contour.color}' stroke='black' stroke-width='0'/>`;
+    }
+    svg += `</svg>`;
+    return svg;
+  }
+
+  function downloadSVG(svgContent, fileName) {
+    console.log("Downloading SVG...");
+    const blob = new Blob([svgContent], { type: "image/svg+xml" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log("Download complete");
+  }
+</script>

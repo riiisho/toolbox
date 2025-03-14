@@ -14,17 +14,29 @@
     <header></header>
     <section>
       <h1>Welcome to the ToolBox</h1>
-      <p>This is WIP but here is a button...</p>
+      <p>This is WIP</p>
     </section>
     <section>
-      <button id="confettiButton">Click me!</button>
-      <p>and another button...</p>
+      <button id="confettiButton">Click for Confetti</button>
+      <p>Play a game?</p>
       <a
         class="tb-button"
-        href="clicker"
-        onclick="if (window.location.hostname.match(/^\d+\.\d+\.\d+\.\d+$/)) this.href = 'clicker.html';"
-        >The Clicker <br />
-        Game</a
+        href="clicker.html"
+        onclick="if (window.location.hostname === 'localhost') this.href = 'clicker.html';"
+        >The Clicker Game</a
+      >
+      <p>or use some tools?</p>
+      <a
+        class="tb-button"
+        href="to-svg"
+        onclick="if (window.location.hostname === 'localhost') this.href = 'to-svg.html';"
+        >Media to SVG</a
+      >
+      <a
+        class="tb-button"
+        href="to-title-case"
+        onclick="if (window.location.hostname === 'localhost') this.href = 'to-title-case.html';"
+        >Title Case Converter</a
       >
     </section>
     <footer>
