@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="stylesheet.css" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <title>ToolBox | To SVG</title>
+    <script src="https://cdn.jsdelivr.net/npm/imagetracerjs"></script>
   </head>
   <body>
     <header>
@@ -32,10 +33,10 @@
       <button id="convertButton">Convert</button>
       <div class="notice-container">
         <h3>Notice</h3>
-        <p>This is WIP and does not work well.</p>
-        <p>For the funnies!</p>
+        <p>This tool uses ImageTracer.js for SVG conversion.</p>
       </div>
     </section>
+    <!-- <div id="outputContainer"></div> -->
     <footer>
       <a href="https://github.com/riiisho/toolbox">View on GitHub</a>
       <p>Made with ❤️ by @riiisho</p>
@@ -46,77 +47,67 @@
 <script>
   const fileInput = document.getElementById("fileInput");
   const fileLabel = document.getElementById("fileLabel");
+  const convertButton = document.getElementById("convertButton");
+  // const outputContainer = document.getElementById("outputContainer");
 
-  // Check if a file is selected on page load
-  if (fileInput.files.length > 0) {
-    const fileName = fileInput.files[0].name;
-    fileLabel.textContent = `Selected file: ${fileName}`;
-  }
-
-  // Add event listener for file input change
-  fileInput.addEventListener("change", function () {
+  // Update label when a file is selected
+  fileInput.addEventListener("change", () => {
     if (fileInput.files.length > 0) {
       const fileName = fileInput.files[0].name;
       fileLabel.textContent = `Selected file: ${fileName}`;
     }
   });
 
-  // Load Web Worker from external file
-  const worker = new Worker("contourWorker.js");
+  // Convert button click handler
+  convertButton.addEventListener("click", async () => {
+    const file = fileInput.files[0];
+    if (!file) {
+      alert("Please select a file first.");
+      return;
+    }
 
-  document
-    .getElementById("convertButton")
-    .addEventListener("click", async () => {
-      console.log("Conversion started...");
-      const file = document.getElementById("fileInput").files[0];
-      if (!file) return;
-
+    try {
       const img = await loadImage(file);
-      const { width, height } = img;
-      console.log(`Image loaded: ${width}x${height}`);
-
       const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
+      canvas.width = img.width;
+      canvas.height = img.height;
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, 0, 0);
 
-      const imageData = ctx.getImageData(0, 0, width, height);
-      console.log("Image data extracted, sending to worker...");
+      // Convert canvas to SVG using ImageTracer.js
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const svgData = ImageTracer.imagedataToSVG(imageData);
 
-      worker.postMessage({ imageData, width, height });
-    });
+      // Display the SVG in the output container
+      // outputContainer.innerHTML = `<h3>Generated SVG:</h3><div>${svgData}</div>`;
 
-  worker.onmessage = (e) => {
-    console.log("Contours detected: ", e.data.contours.length);
-    const svgData = rasterToSVG(e.data.contours, e.data.width, e.data.height);
-    console.log("SVG conversion completed");
-    downloadSVG(svgData, "output.svg");
-  };
+      // Provide a download link for the SVG
+      downloadSVG(svgData, "output.svg");
+    } catch (error) {
+      console.error("Error during conversion:", error);
+      alert(
+        "An error occurred during the conversion process. Please try again with a different image."
+      );
+    }
+  });
 
-  worker.onerror = (e) => {
-    console.error("Worker Error:", e);
-  };
-
+  // Helper function to load an image from a file
   function loadImage(file) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => resolve(img);
+      img.onerror = () =>
+        reject(
+          new Error(
+            "Failed to load the image. Please ensure the file is a valid image."
+          )
+        );
       img.src = URL.createObjectURL(file);
     });
   }
 
-  function rasterToSVG(contours, width, height) {
-    let svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${width}' height='${height}'>`;
-    for (const contour of contours) {
-      svg += `<path d='${contour.path}' fill='${contour.color}' stroke='black' stroke-width='0'/>`;
-    }
-    svg += `</svg>`;
-    return svg;
-  }
-
+  // Helper function to download the SVG
   function downloadSVG(svgContent, fileName) {
-    console.log("Downloading SVG...");
     const blob = new Blob([svgContent], { type: "image/svg+xml" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
@@ -124,6 +115,5 @@
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    console.log("Download complete");
   }
 </script>
