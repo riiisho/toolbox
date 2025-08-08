@@ -73,6 +73,10 @@ footer > a {
   color: rgba(0, 0, 0, 0.5);
 }
 
+footer > a:hover {
+  text-decoration: underline;
+}
+
 .tb-back-button {
   position: absolute;
   top: 2.4rem;
@@ -98,7 +102,8 @@ button,
   transition: background-color 0.1s ease-in-out;
 }
 
-button:hover {
+button:hover,
+.tb-button:hover {
   background-color: rgba(var(--tb-dim-grey), 0.8);
 }
 
